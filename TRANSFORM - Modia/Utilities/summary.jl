@@ -1,16 +1,16 @@
-using Printf, ModiaPlot
+using Printf
+import ModiaResult
 
 # the sol is different for modia than ModelingToolkit
-function reportMinMax(varName::String,modelName::String,sol)
+function reportMinMax(name::String,modelName::String,result)
 
-    time = ModiaPlot.getSignal(sol,"time")[1]
-    val = ModiaPlot.getSignal(sol,varName)[1]
+    (time, signal, signalType) = ModiaResult.rawSignal(result, name)
 
-    y_min = findmin(val)[1][1]
-    t_min = time[findmin(val)[2]]
-    y_max = findmax(val)[1][1]
-    t_max = time[findmax(val)[2]]
-    print("$(varName): $(modelName)\n")
+    y_min, i_min = findmin(signal[1])
+    y_max, i_max = findmax(signal[1])
+    t_min = time[1][i_min]
+    t_max = time[1][i_max]
+    print("$(name): $(modelName)\n")
     print("var\ttime\tvalue\n")
     print("min\t$(t_min)\t$(y_min)\n")
     print("max\t$(t_max)\t$(y_max)\n\n")

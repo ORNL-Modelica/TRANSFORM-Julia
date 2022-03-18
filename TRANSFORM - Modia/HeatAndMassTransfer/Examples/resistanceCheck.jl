@@ -1,7 +1,10 @@
 include("../Resistances/heat.jl")
 include("../../Utilities/summary.jl")
 
-using Measurements, ModiaPlot
+using Measurements, Modia
+#ENV["MODIA_PLOT"] = "PyPlot"
+Modia.usePlotPackage("PyPlot")
+@usingModiaPlot
 
 # Boundary model(s)
 T_a = 293.15u"K"
@@ -33,11 +36,11 @@ sphere_model = PartialTest | Model(
     ]
 )
 
-sol = @instantiateModel(sphere_model, log=false,FloatType=Measurement{Float64})
-@time simulate!(sol, stopTime=1.0, tolerance=1e-4, log=false)
-y_min, t_min, y_max, t_max = reportMinMax("Q_total","Sphere Model",sol)
+result = @instantiateModel(sphere_model, log=false,FloatType=Measurement{Float64})
+@time simulate!(result, stopTime=1.0, tolerance=1e-4, log=false)
+y_min, t_min, y_max, t_max = reportMinMax("Q_total","Sphere Model",result)
 errorCheck(-2513.2742u"J"±0.0u"J", y_min)
-plot(sol, ["Q_total"], figure=1)
+plot(result, ["Q_total"], figure=1)
 
 # Convection model
 surfaceArea = 2u"m^2"
@@ -56,11 +59,11 @@ convection_model = PartialTest | Model(
     ]
 )
 
-sol = @instantiateModel(convection_model, log=false,FloatType=Measurement{Float64})
-@time simulate!(sol, stopTime=1.0, tolerance=1e-4, log=false)
-y_min, t_min, y_max, t_max = reportMinMax("Q_total","Convection Model",sol)
+result = @instantiateModel(convection_model, log=false,FloatType=Measurement{Float64})
+@time simulate!(result, stopTime=1.0, tolerance=1e-4, log=false)
+y_min, t_min, y_max, t_max = reportMinMax("Q_total","Convection Model",result)
 errorCheck(-600u"J"±0.0u"J", y_min)
-plot(sol, ["Q_total"], figure=1)
+plot(result, ["Q_total"], figure=1)
 
 # Contact model
 surfaceArea = 2u"m^2" # units hid until constant unit issue solved
@@ -79,11 +82,11 @@ contact_model = PartialTest | Model(
     ]
 )
 
-sol = @instantiateModel(contact_model, log=false,FloatType=Measurement{Float64})
-@time simulate!(sol, stopTime=1.0, tolerance=1e-4, log=false)
-y_min, t_min, y_max, t_max = reportMinMax("Q_total","Contact Model",sol)
+result = @instantiateModel(contact_model, log=false,FloatType=Measurement{Float64})
+@time simulate!(result, stopTime=1.0, tolerance=1e-4, log=false)
+y_min, t_min, y_max, t_max = reportMinMax("Q_total","Contact Model",result)
 errorCheck(-8u"J"±0.0u"J", y_min)
-plot(sol, ["Q_total"], figure=1)
+plot(result, ["Q_total"], figure=1)
 
 # Radiation exact model
 surfaceArea = 2u"m^2"
@@ -102,11 +105,11 @@ radiationExact_model = PartialTest | Model(
     ]
 )
 
-sol = @instantiateModel(radiationExact_model, log=false,FloatType=Measurement{Float64})
-@time simulate!(sol, stopTime=1.0, tolerance=1e-4, log=false)
-y_min, t_min, y_max, t_max = reportMinMax("Q_total","Radiation Exact Model",sol)
+result = @instantiateModel(radiationExact_model, log=false,FloatType=Measurement{Float64})
+@time simulate!(result, stopTime=1.0, tolerance=1e-4, log=false)
+y_min, t_min, y_max, t_max = reportMinMax("Q_total","Radiation Exact Model",result)
 errorCheck(-126.51638u"J"±0.0u"J", y_min)
-plot(sol, ["Q_total"], figure=1)
+plot(result, ["Q_total"], figure=1)
 
 # Radiation approximate model
 radiationApproximate_model = PartialTest | Model(
@@ -122,8 +125,8 @@ radiationApproximate_model = PartialTest | Model(
     ]
 )
 
-sol = @instantiateModel(radiationApproximate_model, log=false,FloatType=Measurement{Float64})
-@time simulate!(sol, stopTime=1.0, tolerance=1e-4, log=false)
-y_min, t_min, y_max, t_max = reportMinMax("Q_total","Radiation Approximate Model",sol)
+result = @instantiateModel(radiationApproximate_model, log=false,FloatType=Measurement{Float64})
+@time simulate!(result, stopTime=1.0, tolerance=1e-4, log=false)
+y_min, t_min, y_max, t_max = reportMinMax("Q_total","Radiation Approximate Model",result)
 errorCheck(-126.51638u"J"±0.0u"J", y_min)
-plot(sol, ["Q_total"], figure=1)
+plot(result, ["Q_total"], figure=1)

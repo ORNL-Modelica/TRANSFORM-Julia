@@ -2,7 +2,10 @@ include("../Resistances/heat.jl")
 include("../volumes.jl")
 include("../../Utilities/summary.jl")
 
-using Measurements, ModiaPlot
+using Measurements, Modia
+#ENV["MODIA_PLOT"] = "PyPlot"
+Modia.usePlotPackage("PyPlot")
+@usingModiaPlot
 
 T_boundary = (20+273.15)u"K"
 diameter = 0.1u"m"
@@ -21,8 +24,8 @@ model = Model(
     ]
 )
 
-sol = @instantiateModel(model, log=false)#,FloatType=Measurement{Float64})
-@time simulate!(sol, stopTime=500.0, tolerance=1e-4, log=false)
-y_min, t_min, y_max, t_max = reportMinMax("plasticDisk.T","",sol)
+result = @instantiateModel(model, log=false)#,FloatType=Measurement{Float64})
+@time simulate!(result, stopTime=500.0, tolerance=1e-4, log=false)
+y_min, t_min, y_max, t_max = reportMinMax("plasticDisk.T","",result)
 errorCheck(319.72586u"K"±0.0u"K", y_min)
-plot(sol, ["plasticDisk.T"], figure=1)
+plot(result, ["plasticDisk.T"], figure=1)

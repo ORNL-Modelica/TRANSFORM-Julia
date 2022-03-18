@@ -1,7 +1,10 @@
 include("../Resistances/heat.jl")
 include("../../Utilities/summary.jl")
 
-using Measurements, ModiaPlot
+using Measurements, Modia
+#ENV["MODIA_PLOT"] = "PyPlot"
+Modia.usePlotPackage("PyPlot")
+@usingModiaPlot
 
 # Boundary model(s)
 T_a = 95.6u"K"
@@ -44,8 +47,8 @@ model = Model(
     ]
 )
 
-sol = @instantiateModel(model, log=false,FloatType=Measurement{Float64})
-@time simulate!(sol, stopTime=1.0, tolerance=1e-4, log=false)
-y_min, t_min, y_max, t_max = reportMinMax("Q_total","Thermal Resistances Model",sol)
+result = @instantiateModel(model, log=false,FloatType=Measurement{Float64})
+@time simulate!(result, stopTime=1.0, tolerance=1e-4, log=false)
+y_min, t_min, y_max, t_max = reportMinMax("Q_total","Thermal Resistances Model",result)
 errorCheck(-69.43455u"J"±0.0u"J", y_min)
-plot(sol, ["Q_total"], figure=1)
+plot(result, ["Q_total"], figure=1)
