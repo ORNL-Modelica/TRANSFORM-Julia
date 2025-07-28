@@ -1,0 +1,31 @@
+partial component PartialResistance
+    port_a = HeatPort()
+    port_b = HeatPort()
+
+    variable R::Real(units = "K/W")
+relations
+    0 = port_a.Q_flow + port_b.Q_flow
+    port_a.Q_flow = (port_a.T - port_b.T)/max(eps(),R)
+end
+
+component Convection
+    extends PartialResistance()
+    parameter surfaceArea::Area = 0.01
+    parameter alpha::CoefficientOfHeatTransfer = 1000
+relations
+        R = 1/(alpha*max(eps(),surfaceArea))
+end
+
+component Temperature
+    port = HeatPort()
+    parameter T::Temperature = 293.15
+relations
+    port.T = T
+end
+
+component HeatFlow
+    port = HeatPort()
+    parameter Q_flow::HeatFlowRate = 0
+relations
+    port.Q_flow = Q_flow
+end

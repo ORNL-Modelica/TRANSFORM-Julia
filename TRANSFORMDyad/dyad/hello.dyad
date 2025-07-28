@@ -27,3 +27,54 @@ analysis World
   parameter T_inf::Temperature = 300
   parameter h::CoefficientOfHeatTransfer = 0.7
 end
+
+connector HeatPort
+    potential T::Temperature
+    flow Q_flow::HeatFlowRate
+end
+
+partial component PartialResistance
+    port_a = HeatPort()
+    port_b = HeatPort()
+
+    variable R::Real
+relations
+    0 = port_a.Q_flow + port_b.Q_flow
+    port_a.Q_flow = (port_a.T - port_b.T)/max(eps(),R)
+end
+
+component Convection
+    extends PartialResistance()
+    parameter surfaceArea::Area = 0.01
+    parameter alpha::CoefficientOfHeatTransfer = 1000
+relations
+        R = 1/(alpha*max(eps(),surfaceArea))
+end
+
+component Temperature
+    port = HeatPort()
+    parameter T::Temperature = 293.15
+relations
+    port.T = T
+end
+
+component HeatFlow
+    port = HeatPort()
+    parameter Q_flow::HeatFlowRate = 0
+relations
+    port.Q_flow = Q_flow
+end
+
+component ConductionTest
+  resistance = Convection()
+  boundary_a = Temperature()
+  boundary_b = Temperature(T=500)
+  relations
+  connect(boundary_a.port, resistance.port_a)
+  connect(boundary_b.port, resistance.port_b)
+end
+
+analysis SimConductionTest
+    extends TransientAnalysis(stop=10)
+    model = ConductionTest()
+end

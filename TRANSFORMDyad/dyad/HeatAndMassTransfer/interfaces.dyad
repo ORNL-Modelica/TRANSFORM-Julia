@@ -1,0 +1,4 @@
+connector HeatPort
+    potential T::Temperature
+    flow Q_flow::HeatFlowRate
+end
