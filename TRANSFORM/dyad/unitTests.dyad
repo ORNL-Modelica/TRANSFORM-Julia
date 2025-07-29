@@ -1,0 +1,93 @@
+partial component PartialUnitTest
+    parameter T_a::Temperature = 293.15
+    parameter T_b::Temperature = 313.15
+
+    variable Q_total::Power
+
+    boundary_a = TemperatureBoundary(T=T_a)
+    boundary_b = TemperatureBoundary(T=T_b)
+relations
+    initial Q_total = 0
+end
+
+test component TestPlane
+    extends PartialUnitTest()
+    parameter th::Length = 1
+    parameter crossArea::Area = 2
+    parameter lambda::ThermalConductivity = 5
+    resistance = Plane(th=th, crossArea=crossArea, lambda=lambda)
+relations
+    connect(boundary_a.port, resistance.port_a)
+    connect(boundary_b.port, resistance.port_b)
+    der(Q_total) = resistance.port_a.Q_flow
+end
+
+analysis SimTestPlane
+    extends TransientAnalysis(stop=1)
+    model = TestPlane()
+end
+
+test component TestConvection
+    extends PartialUnitTest()
+    parameter surfaceArea::Area = 2
+    parameter alpha::CoefficientOfHeatTransfer = 15
+    resistance = Convection(surfaceArea=surfaceArea, alpha=alpha)
+relations
+    connect(boundary_a.port, resistance.port_a)
+    connect(boundary_b.port, resistance.port_b)
+    der(Q_total) = resistance.port_a.Q_flow
+end
+
+analysis SimTestConvection
+    extends TransientAnalysis(stop=1)
+    model = TestConvection()
+end
+
+test component TestSphere
+    extends PartialUnitTest()
+    parameter r_inner::Length = 1.0
+    parameter r_outer::Length = 2.0
+    parameter lambda::ThermalConductivity = 5.0
+    resistance = Sphere(r_inner=r_inner, r_outer=r_outer, lambda=lambda)
+relations
+    connect(boundary_a.port, resistance.port_a)
+    connect(boundary_b.port, resistance.port_b)
+    der(Q_total) = resistance.port_a.Q_flow
+end
+
+analysis SimTestSphere
+    extends TransientAnalysis(stop=1)
+    model = TestSphere()
+end
+
+test component TestContact
+    extends PartialUnitTest()
+    parameter surfaceArea::Area = 2
+    parameter Rc_pp::Real = 15
+    resistance = Contact(surfaceArea=surfaceArea, Rc_pp=Rc_pp)
+relations
+    connect(boundary_a.port, resistance.port_a)
+    connect(boundary_b.port, resistance.port_b)
+    der(Q_total) = resistance.port_a.Q_flow
+end
+
+analysis SimTestContact
+    extends TransientAnalysis(stop=1)
+    model = TestContact()
+end
+
+test component TestRadiation
+    extends PartialUnitTest()
+    parameter surfaceArea::Area = 2
+    parameter epsilon::Real = 0.5
+    resistance = Radiation(surfaceArea=surfaceArea, epsilon=epsilon)
+relations
+    connect(boundary_a.port, resistance.port_a)
+    connect(boundary_b.port, resistance.port_b)
+    der(Q_total) = resistance.port_a.Q_flow
+end
+
+analysis SimTestRadiation
+    extends TransientAnalysis(stop=1)
+    model = TestRadiation()
+end

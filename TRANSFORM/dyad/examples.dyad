@@ -1,0 +1,45 @@
+component part_ab_ThermalResistances
+  parameter T_a::Temperature = 95.6
+  parameter T_b::Temperature = 273.15
+  
+  parameter r_inner::Length = 0.1
+  parameter th_1::Length = 0.0025
+  parameter th_ins::Length = 0.01
+  parameter th_2::Length = 0.0025
+
+  final parameter r_ins_inner::Length = r_inner + th_1
+  final parameter r_ins_outer::Length = r_ins_inner + th_ins
+  final parameter r_outer::Length = r_ins_outer + th_2
+
+  variable Q_total::Power
+
+  final constant pi::Real = 3.14159 
+
+  boundary_a = TemperatureBoundary(T=T_a)
+  boundary_b = TemperatureBoundary(T=T_b)
+  convectionInner = Convection(surfaceArea=4*pi*r_inner^2,alpha=150)
+  linerInner = Sphere(r_inner=r_inner,r_outer=r_ins_inner,lambda=15)
+  contact_1 = Contact(surfaceArea=4*pi*r_ins_inner^2,Rc_pp=0.003)
+  insulation = Sphere(r_inner=r_ins_inner,r_outer=r_ins_outer,lambda=0.033)
+  contact_2 = Contact(surfaceArea=4*pi*r_ins_outer^2,Rc_pp=0.003)
+  linerOuter = Sphere(r_inner=r_ins_outer,r_outer=r_outer,lambda=15)
+  radiationOuter = Radiation(surfaceArea=4*pi*r_outer^2,epsilon=0.7)
+  convectionOuter = Convection(surfaceArea=4*pi*r_outer^2,alpha=6.0)
+relations
+  initial Q_total = 0.0
+
+    connect(convectionInner.port_a,boundary_a.port)
+    connect(convectionInner.port_b,linerInner.port_a)
+    connect(linerInner.port_b,contact_1.port_a)
+    connect(contact_1.port_b,insulation.port_a)
+    connect(insulation.port_b,contact_2.port_a)
+    connect(contact_2.port_b,linerOuter.port_a)
+    connect(linerOuter.port_b,radiationOuter.port_a,convectionOuter.port_a)
+    connect(convectionOuter.port_b, radiationOuter.port_b,boundary_b.port)
+    der(Q_total) = convectionInner.port_a.Q_flow
+end
+
+analysis part_ab_ThermalResistancesSIM
+    extends TransientAnalysis(stop=1)
+    model = part_ab_ThermalResistances()
+end
