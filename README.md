@@ -2,7 +2,10 @@
 
 A test implementing capabilities of the TRANSFORM Modelica Library in the Julia language. This tests the Modia approach and the ModelingToolkit approach.
 
-# Instructions
+# Instructions for Dyad
+- See [README.md in TRANSFORM](TRANSFORM/README.md) folder
+
+# Instructions for ModelingToolk and Modia
 - Clone repository
 - Install [VSCode](https://code.visualstudio.com/download)
     - Once installed, go to `Extensions` and Install the official `Julia` extension.

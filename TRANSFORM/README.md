@@ -41,8 +41,37 @@ can run the provided example models by doing the following:
 10. You can plot variations on that simulation using keyword arguments.  For example,
     try `plot(Sim*(VALUE=4))` where VALUE is exposed parameters if any are available.
 
-# Currently identified issues with Dyad
 
+
+# Julia CON
+- Everything should be `variable`. `parameter`, etc. should be special cases
+   - Prevents switching from a parameter from a static value to a variable value. Requires new model. Dymola does this much better (not MSL).
+- `variable` should have information baked in that can be referenced without defining additional parameters.
+   - e.g., they should have a `start` value that can be defined elsewhere without have to define an addition parameter
+   - note, below is a quick description that may not make sense to others. feel free to ask me to clarify
+      ```
+      component TEST
+      parameter a_start::Real = 1 # why!??!
+      variable a::Real
+      # variable
+      relations
+      initial a = a_start # unclear if this is fixed or a guess? how to differentiate. this should be fixed if used here
+      initial a.start = 10 # or don't define here and allow to define in another model
+      end
+
+      component COOL
+      #below are options/ideas and not saying to be used all together
+      model = TEST(a.start=10)
+      initial model.a.start = 10 #guess
+      relation
+      initial model.a.start = 10 #fixed
+      end
+      ```
+
+# Currently identified issues with Dyad (not in order)
+- Previously limiations to number of `extends`. Not tested yet if still an issue.
+- Can you reference parameters within models without adding new ones every layer up? 
+   - should be able to dive into a model to modify
 - Subfolders not supported in Dyad for now
    - Cannot properly structure libraries
 - `generated` folder is included in git to allow someone to use without regenerating.
@@ -88,3 +117,4 @@ can run the provided example models by doing the following:
     `include("test/runUnitTests.jl")` throws weird errors that don't make sense (tests pass individually but fail together, e.g., throw `eps_` error even though it doesn’t exist in that component)
 - Had to close and reopen VSCode to get rid of deleted Dyad files in the `generated` folder
 - Still get random erros saying `eps_` isn't defined even though it OF COURSE IT ISN'T... Very strange. Phantom errors that can't be fixed.
+
