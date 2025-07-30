@@ -68,6 +68,7 @@
 
   ### Equations
   __eqs = Equation[]
+  # Expanded - choose 1#connect(linerOuter.port_b,radiationOuter.port_a)#connect(linerOuter.port_b,convectionOuter.port_a)#connect(radiationOuter.port_b,boundary_Ambient.port)#connect(convectionOuter.port_b,boundary_Ambient.port)
   push!(__eqs, D(Q_total) ~ convectionInner.port_a.Q_flow)
   push!(__eqs, connect(convectionInner.port_a, boundary_LiquidOxygen.port))
   push!(__eqs, connect(convectionInner.port_b, linerInner.port_a))
@@ -75,11 +76,9 @@
   push!(__eqs, connect(contact_1.port_b, insulation.port_a))
   push!(__eqs, connect(insulation.port_b, contact_2.port_a))
   push!(__eqs, connect(contact_2.port_b, linerOuter.port_a))
-  # Commented out and expanded instead as unclear if this is supported in Dyad#connect(linerOuter.port_b,radiationOuter.port_a,convectionOuter.port_a)#connect(convectionOuter.port_b, radiationOuter.port_b,boundary_Ambient.port)
-  push!(__eqs, connect(linerOuter.port_b, radiationOuter.port_a))
-  push!(__eqs, connect(linerOuter.port_b, convectionOuter.port_a))
-  push!(__eqs, connect(radiationOuter.port_b, boundary_Ambient.port))
-  push!(__eqs, connect(convectionOuter.port_b, boundary_Ambient.port))
+  # Condensed - choose 1
+  push!(__eqs, connect(linerOuter.port_b, radiationOuter.port_a, convectionOuter.port_a))
+  push!(__eqs, connect(convectionOuter.port_b, radiationOuter.port_b, boundary_Ambient.port))
 
   # Return completely constructed ODESystem
   return ODESystem(__eqs, t, __vars, __params; systems=__systems, defaults=__defaults, name, initialization_eqs=__initialization_eqs)
