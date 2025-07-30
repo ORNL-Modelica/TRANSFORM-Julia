@@ -29,9 +29,9 @@
 
   ### Symbolic Parameters
   __params = Any[]
+  append!(__params, @parameters (eps_::Float64 = 1e-15), [description = "should be a constant instead e.g., eps_()"])
   append!(__params, @parameters (surfaceArea::Float64 = surfaceArea))
   append!(__params, @parameters (alpha::Float64 = alpha))
-  append!(__params, @parameters (eps_::Float64 = 1e-15), [description = "should be a constant instead e.g., eps_()"])
 
   ### Variables
   __vars = Any[]

@@ -1,6 +1,6 @@
-component part_ab_ThermalResistances
+component Part_ab_ThermalResistances
   parameter T_a::Temperature = 95.6
-  parameter T_b::Temperature = 273.15
+  parameter T_b::Temperature = 293.15
   
   parameter r_inner::Length = 0.1
   parameter th_1::Length = 0.0025
@@ -15,8 +15,8 @@ component part_ab_ThermalResistances
 
   final constant pi::Real = 3.14159 
 
-  boundary_a = TemperatureBoundary(T=T_a)
-  boundary_b = TemperatureBoundary(T=T_b)
+  boundary_LiquidOxygen = TemperatureBoundary(T=T_a)
+  boundary_Ambient = TemperatureBoundary(T=T_b)
   convectionInner = Convection(surfaceArea=4*pi*r_inner^2,alpha=150)
   linerInner = Sphere(r_inner=r_inner,r_outer=r_ins_inner,lambda=15)
   contact_1 = Contact(surfaceArea=4*pi*r_ins_inner^2,Rc_pp=0.003)
@@ -28,18 +28,23 @@ component part_ab_ThermalResistances
 relations
   initial Q_total = 0.0
 
-    connect(convectionInner.port_a,boundary_a.port)
+    connect(convectionInner.port_a,boundary_LiquidOxygen.port)
     connect(convectionInner.port_b,linerInner.port_a)
     connect(linerInner.port_b,contact_1.port_a)
     connect(contact_1.port_b,insulation.port_a)
     connect(insulation.port_b,contact_2.port_a)
     connect(contact_2.port_b,linerOuter.port_a)
-    connect(linerOuter.port_b,radiationOuter.port_a,convectionOuter.port_a)
-    connect(convectionOuter.port_b, radiationOuter.port_b,boundary_b.port)
+    # Commented out and expanded instead as unclear if this is supported in Dyad
+    #connect(linerOuter.port_b,radiationOuter.port_a,convectionOuter.port_a)
+    #connect(convectionOuter.port_b, radiationOuter.port_b,boundary_Ambient.port)
+    connect(linerOuter.port_b,radiationOuter.port_a)
+    connect(linerOuter.port_b,convectionOuter.port_a)
+    connect(radiationOuter.port_b,boundary_Ambient.port)
+    connect(convectionOuter.port_b,boundary_Ambient.port)
     der(Q_total) = convectionInner.port_a.Q_flow
 end
 
-analysis part_ab_ThermalResistancesSIM
+analysis SimPart_ab_ThermalResistances
     extends TransientAnalysis(stop=1)
-    model = part_ab_ThermalResistances()
+    model = Part_ab_ThermalResistances()
 end

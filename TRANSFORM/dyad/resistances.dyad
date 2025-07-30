@@ -16,6 +16,8 @@ partial component PartialResistance
     port_a = HeatPort()
     port_b = HeatPort()
     variable R::Real(units = "K/W")
+    # should be a constant instead e.g., eps_()
+    final parameter eps_::Real(units="m^2") = 1e-15
 relations
     0 = port_a.Q_flow + port_b.Q_flow
     port_a.Q_flow = (port_a.T - port_b.T)/max(eps_,R)
@@ -26,8 +28,6 @@ component Plane
     parameter th::Length = 0.01
     parameter crossArea::Area = 1.0
     parameter lambda::ThermalConductivity = 5.0
-    # should be a constant instead e.g., eps_()
-    final parameter eps_::Real(units="m^2") = 1e-15
 relations
     R = th/max(eps_, lambda*crossArea)
 end
@@ -36,8 +36,6 @@ component Convection
     extends PartialResistance()
     parameter surfaceArea::Area = 0.01
     parameter alpha::CoefficientOfHeatTransfer = 1000
-    # should be a constant instead e.g., eps_()
-    final parameter eps_::Real(units="m^2") = 1e-15
 relations
     R = 1/max(eps_,alpha*surfaceArea)
 end
@@ -58,8 +56,6 @@ component Contact
        
     parameter surfaceArea::Area = 0.01
     parameter Rc_pp::Real(units="m^2*K/W") = 1.0
-    # should be a constant instead e.g., eps_()
-    final parameter eps_::Real(units="m^2") = 1e-15
 relations
         R = Rc_pp/max(eps_,surfaceArea)
 end

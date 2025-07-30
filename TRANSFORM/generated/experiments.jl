@@ -5,7 +5,7 @@
 ### Instead, update the Dyad source code and regenerate this file
 
 
-include("part_ab_ThermalResistances_experiment.jl")
+include("Part_ab_ThermalResistances_experiment.jl")
 include("TemperatureBoundary_experiment.jl")
 include("HeatFlowBoundary_experiment.jl")
 include("Plane_experiment.jl")

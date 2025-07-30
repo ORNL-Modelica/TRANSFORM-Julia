@@ -30,6 +30,7 @@
 
   ### Symbolic Parameters
   __params = Any[]
+  append!(__params, @parameters (eps_::Float64 = 1e-15), [description = "should be a constant instead e.g., eps_()"])
   append!(__params, @parameters (r_inner::Float64 = r_inner))
   append!(__params, @parameters (r_outer::Float64 = r_outer))
   append!(__params, @parameters (lambda::Float64 = lambda))

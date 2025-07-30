@@ -12,7 +12,7 @@ RuntimeGeneratedFunctions.init(@__MODULE__)
 
 
 
-include("part_ab_ThermalResistances_test.jl")
+include("Part_ab_ThermalResistances_test.jl")
 include("TemperatureBoundary_test.jl")
 include("HeatFlowBoundary_test.jl")
 include("Plane_test.jl")

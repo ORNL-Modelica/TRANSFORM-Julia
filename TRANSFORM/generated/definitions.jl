@@ -55,8 +55,8 @@ This connector represents a rotational spline with angle and torque as the poten
   return ODESystem(Equation[], t, vars, []; name)
 end
 
-include("part_ab_ThermalResistances_definition.jl")
-include("part_ab_ThermalResistancesSIM_definition.jl")
+include("Part_ab_ThermalResistances_definition.jl")
+include("SimPart_ab_ThermalResistances_definition.jl")
 include("HeatPort_definition.jl")
 include("TemperatureBoundary_definition.jl")
 include("HeatFlowBoundary_definition.jl")

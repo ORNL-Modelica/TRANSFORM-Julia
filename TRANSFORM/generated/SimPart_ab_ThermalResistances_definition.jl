@@ -6,8 +6,8 @@
 
 using DyadInterface
 
-@kwdef mutable struct part_ab_ThermalResistancesSIMSpec <: AbstractTransientAnalysisSpec
-  name::Symbol = :part_ab_ThermalResistancesSIM
+@kwdef mutable struct SimPart_ab_ThermalResistancesSpec <: AbstractTransientAnalysisSpec
+  name::Symbol = :SimPart_ab_ThermalResistances
   var"alg"::String = "auto"
   var"start"::Float64 = 0
   var"stop"::Float64 = 1
@@ -16,10 +16,10 @@ using DyadInterface
   var"saveat"::Float64 = 0
   var"dtmax"::Float64 = 0
   var"IfLifting"::Bool = false
-  var"model"::Union{Nothing, ODESystem} = TRANSFORM.part_ab_ThermalResistances(; name=:part_ab_ThermalResistances)
+  var"model"::Union{Nothing, ODESystem} = TRANSFORM.Part_ab_ThermalResistances(; name=:Part_ab_ThermalResistances)
 end
 
-function DyadInterface.run_analysis(spec::part_ab_ThermalResistancesSIMSpec)
+function DyadInterface.run_analysis(spec::SimPart_ab_ThermalResistancesSpec)
   spec.model = DyadInterface.update_model(spec.model, (; ))
   base_spec = TransientAnalysisSpec(;
     name=:TransientAnalysis, alg=spec.alg, start=spec.start, stop=spec.stop, abstol=spec.abstol, reltol=spec.reltol, saveat=spec.saveat, dtmax=spec.dtmax, IfLifting=spec.IfLifting, model=spec.model
@@ -27,6 +27,6 @@ function DyadInterface.run_analysis(spec::part_ab_ThermalResistancesSIMSpec)
   run_analysis(base_spec)
 end
 
-part_ab_ThermalResistancesSIM(;kwargs...) = run_analysis(part_ab_ThermalResistancesSIMSpec(;kwargs...))
-export part_ab_ThermalResistancesSIM, part_ab_ThermalResistancesSIMSpec
-export part_ab_ThermalResistancesSIMSpec, part_ab_ThermalResistancesSIM
+SimPart_ab_ThermalResistances(;kwargs...) = run_analysis(SimPart_ab_ThermalResistancesSpec(;kwargs...))
+export SimPart_ab_ThermalResistances, SimPart_ab_ThermalResistancesSpec
+export SimPart_ab_ThermalResistancesSpec, SimPart_ab_ThermalResistances

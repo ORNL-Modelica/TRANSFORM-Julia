@@ -55,7 +55,7 @@ can run the provided example models by doing the following:
       variable a::Real
       # variable
       relations
-      initial a = a_start # unclear if this is fixed or a guess? how to differentiate. this should be fixed if used here
+      initial a = a_start # unclear if this is fixed or a guess? how to distinguish between guess/fixed. this should be fixed if used here
       initial a.start = 10 # or don't define here and allow to define in another model
       end
 
@@ -99,7 +99,9 @@ can run the provided example models by doing the following:
 - Restarting the REPL has to happen ALOT to find new files, sometimes pickup changes.
 - Constants
    - Are there a globally defined set of constants for the community? How to use if so (e.g., `pi`, Boltzmann constant, etc.)?
-- `if/else` statements (`ifelse`) - think this worked... is there if/elseif/../else?
+- `if/else` statements (`ifelse`) - think this worked...
+   - Is there if/elseif/../else?
+- Can you put more than 2 things in `connect(a,b,c)`?
 - How to get values from simulation results that are not state variables?
    - e.g., had simulations with no state variables (pure steady state) and couldn't plot anything
 - Replaceable models supported?
@@ -111,17 +113,19 @@ can run the provided example models by doing the following:
    - See variable values in Explorer (like other languages)
    - See open file components/functions for navigation (like other languages)
 - What does the `test` prefix do before a component?
-- What are the protected names? (e.g., apparently `eps` is protected)
+- What are the protected names? (e.g., apparently `eps` is protected?)
 - What is the correct way to run multiple examples or unit tests at once?  
   - Currently, putting them all in a `.jl` file (e.g., `plot(SimTest*())`) and running with  
     `include("test/runUnitTests.jl")` throws weird errors that don't make sense (tests pass individually but fail together, e.g., throw `eps_` error even though it doesn’t exist in that component)
 - Had to close and reopen VSCode to get rid of deleted Dyad files in the `generated` folder
-- Still get random erros saying `eps_` isn't defined even though it OF COURSE IT ISN'T... Very strange. Phantom errors that can't be fixed.
-- plot(part_ab_ThermalResistances()) throws a non-sensical (from my perspective) error
+- ~~Still get random erros saying `eps_` isn't defined even though it OF COURSE IT ISN'T... Very strange. Phantom errors that can't be fixed.~~
+   - **FIXED**: The error was in partial resistances. Error messages could be improved to help locate the issue better perhaps.
+- ~~plot(part_ab_ThermalResistances()) throws a non-sensical (from my perspective) error~~
    - plot(part_ab_ThermalResistances())
 ERROR: UndefKeywordError: keyword argument `name` not assigned
 Stacktrace:
- [1] part_ab_ThermalResistances()
+ [1] Part_ab_ThermalResistances()
    @ TRANSFORM C:\Users\fig\.julia\packages\ModelingToolkit\Z9mEq\src\systems\abstractsystem.jl:2463
  [2] top-level scope
    @ REPL[3]:1
+   - **FIXED:** Meant to call SimPart_ab_ThermalResistances instead of Part_ab_ThermalResistances

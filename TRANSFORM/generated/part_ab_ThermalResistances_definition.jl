@@ -5,14 +5,14 @@
 
 
 @doc Markdown.doc"""
-   part_ab_ThermalResistances(; name, T_a, T_b, r_inner, th_1, th_ins, th_2)
+   Part_ab_ThermalResistances(; name, T_a, T_b, r_inner, th_1, th_ins, th_2)
 
 ## Parameters: 
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
 | `T_a`         |                          | K  |   95.6 |
-| `T_b`         |                          | K  |   273.15 |
+| `T_b`         |                          | K  |   293.15 |
 | `r_inner`         |                          | m  |   0.1 |
 | `th_1`         |                          | m  |   0.0025 |
 | `th_ins`         |                          | m  |   0.01 |
@@ -24,7 +24,7 @@
 | ------------ | ----------------------------------- | ------ | 
 | `Q_total`         |                          | W  | 
 """
-@component function part_ab_ThermalResistances(; name, T_a=95.6, T_b=273.15, r_inner=0.1, th_1=0.0025, th_ins=0.01, th_2=0.0025)
+@component function Part_ab_ThermalResistances(; name, T_a=95.6, T_b=293.15, r_inner=0.1, th_1=0.0025, th_ins=0.01, th_2=0.0025)
 
   ### Symbolic Parameters
   __params = Any[]
@@ -48,8 +48,8 @@
 
   ### Components
   __systems = ODESystem[]
-  push!(__systems, @named boundary_a = TRANSFORM.TemperatureBoundary(T=T_a))
-  push!(__systems, @named boundary_b = TRANSFORM.TemperatureBoundary(T=T_b))
+  push!(__systems, @named boundary_LiquidOxygen = TRANSFORM.TemperatureBoundary(T=T_a))
+  push!(__systems, @named boundary_Ambient = TRANSFORM.TemperatureBoundary(T=T_b))
   push!(__systems, @named convectionInner = TRANSFORM.Convection(surfaceArea=4 * pi * r_inner ^ 2, alpha=150))
   push!(__systems, @named linerInner = TRANSFORM.Sphere(r_inner=r_inner, r_outer=r_ins_inner, lambda=15))
   push!(__systems, @named contact_1 = TRANSFORM.Contact(surfaceArea=4 * pi * r_ins_inner ^ 2, Rc_pp=0.003))
@@ -69,21 +69,24 @@
   ### Equations
   __eqs = Equation[]
   push!(__eqs, D(Q_total) ~ convectionInner.port_a.Q_flow)
-  push!(__eqs, connect(convectionInner.port_a, boundary_a.port))
+  push!(__eqs, connect(convectionInner.port_a, boundary_LiquidOxygen.port))
   push!(__eqs, connect(convectionInner.port_b, linerInner.port_a))
   push!(__eqs, connect(linerInner.port_b, contact_1.port_a))
   push!(__eqs, connect(contact_1.port_b, insulation.port_a))
   push!(__eqs, connect(insulation.port_b, contact_2.port_a))
   push!(__eqs, connect(contact_2.port_b, linerOuter.port_a))
-  push!(__eqs, connect(linerOuter.port_b, radiationOuter.port_a, convectionOuter.port_a))
-  push!(__eqs, connect(convectionOuter.port_b, radiationOuter.port_b, boundary_b.port))
+  # Commented out and expanded instead as unclear if this is supported in Dyad#connect(linerOuter.port_b,radiationOuter.port_a,convectionOuter.port_a)#connect(convectionOuter.port_b, radiationOuter.port_b,boundary_Ambient.port)
+  push!(__eqs, connect(linerOuter.port_b, radiationOuter.port_a))
+  push!(__eqs, connect(linerOuter.port_b, convectionOuter.port_a))
+  push!(__eqs, connect(radiationOuter.port_b, boundary_Ambient.port))
+  push!(__eqs, connect(convectionOuter.port_b, boundary_Ambient.port))
 
   # Return completely constructed ODESystem
   return ODESystem(__eqs, t, __vars, __params; systems=__systems, defaults=__defaults, name, initialization_eqs=__initialization_eqs)
 end
-export part_ab_ThermalResistances
+export Part_ab_ThermalResistances
 
-Base.show(io::IO, a::MIME"image/svg+xml", t::typeof(part_ab_ThermalResistances)) = print(io,
+Base.show(io::IO, a::MIME"image/svg+xml", t::typeof(Part_ab_ThermalResistances)) = print(io,
   """<div style="height: 100%; width: 100%; background-color: white"><div style="margin: auto; height: 500px; width: 500px; padding: 200px"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 1000"
     overflow="visible" shape-rendering="geometricPrecision" text-rendering="geometricPrecision">
       <defs>

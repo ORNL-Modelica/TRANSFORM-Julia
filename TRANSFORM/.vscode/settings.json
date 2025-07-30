@@ -1,4 +1,5 @@
 {
     "julia.NumThreads": "auto",
-    "files.autoSave": "off"
+    "files.autoSave": "off",
+    "julia.environmentPath": "c:\\Users\\fig\\Documents\\Modelica\\TRANSFORM-Julia\\TRANSFORM"
 }
