@@ -117,4 +117,11 @@ can run the provided example models by doing the following:
     `include("test/runUnitTests.jl")` throws weird errors that don't make sense (tests pass individually but fail together, e.g., throw `eps_` error even though it doesn’t exist in that component)
 - Had to close and reopen VSCode to get rid of deleted Dyad files in the `generated` folder
 - Still get random erros saying `eps_` isn't defined even though it OF COURSE IT ISN'T... Very strange. Phantom errors that can't be fixed.
-
+- plot(part_ab_ThermalResistances()) throws a non-sensical (from my perspective) error
+   - plot(part_ab_ThermalResistances())
+ERROR: UndefKeywordError: keyword argument `name` not assigned
+Stacktrace:
+ [1] part_ab_ThermalResistances()
+   @ TRANSFORM C:\Users\fig\.julia\packages\ModelingToolkit\Z9mEq\src\systems\abstractsystem.jl:2463
+ [2] top-level scope
+   @ REPL[3]:1
