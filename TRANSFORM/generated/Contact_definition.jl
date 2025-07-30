@@ -7,12 +7,14 @@
 @doc Markdown.doc"""
    Contact(; name, surfaceArea, Rc_pp)
 
+Contact
+
 ## Parameters: 
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `surfaceArea`         |                          | m2  |   0.01 |
-| `Rc_pp`         |                          | m^2*K/W  |   1 |
+| `surfaceArea`         | Heat transfer surface area                         | m2  |   0.01 |
+| `Rc_pp`         | Area specific contact resistance                         | m^2*K/W  |   1 |
 
 ## Connectors
 
@@ -29,9 +31,9 @@
 
   ### Symbolic Parameters
   __params = Any[]
-  append!(__params, @parameters (eps_::Float64 = 1e-15), [description = "should be a constant instead e.g., eps_()"])
-  append!(__params, @parameters (surfaceArea::Float64 = surfaceArea))
-  append!(__params, @parameters (Rc_pp::Float64 = Rc_pp))
+  append!(__params, @parameters (eps_::Float64 = 1e-15), [description = "should be a machine-based constant instead e.g., eps_()"])
+  append!(__params, @parameters (surfaceArea::Float64 = surfaceArea), [description = "Heat transfer surface area"])
+  append!(__params, @parameters (Rc_pp::Float64 = Rc_pp), [description = "Area specific contact resistance"])
 
   ### Variables
   __vars = Any[]

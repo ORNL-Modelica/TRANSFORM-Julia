@@ -139,3 +139,8 @@ Stacktrace:
    contact_1₊port_a₊T(t)  => linerInner₊port_b₊T(t)
    radiationOuter₊port_a₊T(t)  => convectionOuter₊port_a₊T(t)
    ```
+- Comments: Having descriptions above variables is ok but it should respect line breaks or some other special character so other comments can be placed (e.g., create section breaks in the code for readability). For example:
+   ```
+   ## Some stuff. not a description for the parameter   
+   parameter A::Real
+   ```

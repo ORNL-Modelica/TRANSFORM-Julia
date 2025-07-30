@@ -7,13 +7,15 @@
 @doc Markdown.doc"""
    Radiation(; name, surfaceArea, epsilon, useExact)
 
+Radiation
+
 ## Parameters: 
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `surfaceArea`         |                          | m2  |   0.01 |
-| `epsilon`         |                          | m/m  |   1 |
-| `useExact`         |                          | --  |   true |
+| `surfaceArea`         | Heat transfer surface area                         | m2  |   0.01 |
+| `epsilon`         | Emissivity                         | m/m  |   1 |
+| `useExact`         | =false to use average temperature approximation Tbar^3                         | --  |   true |
 
 ## Connectors
 
@@ -30,10 +32,10 @@
 
   ### Symbolic Parameters
   __params = Any[]
-  append!(__params, @parameters (eps_::Float64 = 1e-15), [description = "should be a constant instead e.g., eps_()"])
-  append!(__params, @parameters (surfaceArea::Float64 = surfaceArea))
-  append!(__params, @parameters (epsilon::Float64 = epsilon))
-  append!(__params, @parameters (useExact::Bool = useExact))
+  append!(__params, @parameters (eps_::Float64 = 1e-15), [description = "should be a machine-based constant instead e.g., eps_()"])
+  append!(__params, @parameters (surfaceArea::Float64 = surfaceArea), [description = "Heat transfer surface area"])
+  append!(__params, @parameters (epsilon::Float64 = epsilon), [description = "Emissivity"])
+  append!(__params, @parameters (useExact::Bool = useExact), [description = "=false to use average temperature approximation Tbar^3"])
   append!(__params, @parameters (sigma::Float64 = 5.670374419 * 10 ^ (-8)), [description = "should be a constant but causes an error"])
 
   ### Variables
@@ -58,7 +60,6 @@
   __eqs = Equation[]
   push!(__eqs, 0 ~ port_a.Q_flow + port_b.Q_flow)
   push!(__eqs, port_a.Q_flow ~ (port_a.T - port_b.T) / max(eps_, R))
-  # R ~ IfElse.ifelse(useExact,#            1/(surfaceArea*sigma*epsilon*(port_a.T^2+port_b.T^2)*(port_a.T + port_b.T)),#            1/(4*surfaceArea*sigma*epsilon*(0.5*(port_a.T + port_b.T))^3))#R = 1/(surfaceArea*sigma*epsilon*(port_a.T^2+port_b.T^2)*(port_a.T + port_b.T))
   push!(__eqs, R ~ ifelse(useExact, 1 / (surfaceArea * sigma * epsilon * (port_a.T ^ 2 + port_b.T ^ 2) * (port_a.T + port_b.T)), 1 / (4 * surfaceArea * sigma * epsilon * (0.5 * (port_a.T + port_b.T)) ^ 3)))
 
   # Return completely constructed ODESystem

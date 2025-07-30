@@ -7,6 +7,8 @@
 @doc Markdown.doc"""
    TemperatureBoundary(; name, T)
 
+Temperature boundary condition
+
 ## Parameters: 
 
 | Name         | Description                         | Units  |   Default value |

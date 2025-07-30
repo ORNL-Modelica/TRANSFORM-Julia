@@ -7,13 +7,15 @@
 @doc Markdown.doc"""
    Sphere(; name, r_inner, r_outer, lambda)
 
+Sphere | Radial
+
 ## Parameters: 
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `r_inner`         |                          | m  |   0.01 |
-| `r_outer`         |                          | m  |   1 |
-| `lambda`         |                          | W/(m.K)  |   5 |
+| `r_inner`         | Inner radius                         | m  |   0.01 |
+| `r_outer`         | Outerius                         | m  |   1 |
+| `lambda`         | Thermal conductivity                         | W/(m.K)  |   5 |
 
 ## Connectors
 
@@ -30,10 +32,10 @@
 
   ### Symbolic Parameters
   __params = Any[]
-  append!(__params, @parameters (eps_::Float64 = 1e-15), [description = "should be a constant instead e.g., eps_()"])
-  append!(__params, @parameters (r_inner::Float64 = r_inner))
-  append!(__params, @parameters (r_outer::Float64 = r_outer))
-  append!(__params, @parameters (lambda::Float64 = lambda))
+  append!(__params, @parameters (eps_::Float64 = 1e-15), [description = "should be a machine-based constant instead e.g., eps_()"])
+  append!(__params, @parameters (r_inner::Float64 = r_inner), [description = "Inner radius"])
+  append!(__params, @parameters (r_outer::Float64 = r_outer), [description = "Outerius"])
+  append!(__params, @parameters (lambda::Float64 = lambda), [description = "Thermal conductivity"])
   append!(__params, @parameters (pi::Float64 = 3.14159), [description = "pi - should be moved elsewhere"])
 
   ### Variables

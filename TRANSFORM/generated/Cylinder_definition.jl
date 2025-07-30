@@ -5,16 +5,18 @@
 
 
 @doc Markdown.doc"""
-   Convection(; name, surfaceArea, alpha)
+   Cylinder(; name, length, r_inner, r_outer, lambda)
 
-Convection
+Cylinder | Radial
 
 ## Parameters: 
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `surfaceArea`         | Heat transfer surface area                         | m2  |   0.01 |
-| `alpha`         | Convection heat transfer coefficient                         | W/(m2.K)  |   1000 |
+| `length`         | Cylinder length                         | m  |   1 |
+| `r_inner`         | Inner radius                         | m2  |   1 |
+| `r_outer`         | Outer radius                         | m2  |   2 |
+| `lambda`         | Thermal conductivity                         | W/(m.K)  |   5 |
 
 ## Connectors
 
@@ -27,13 +29,16 @@ Convection
 | ------------ | ----------------------------------- | ------ | 
 | `R`         |                          | K/W  | 
 """
-@component function Convection(; name, surfaceArea=0.01, alpha=1000)
+@component function Cylinder(; name, length=1, r_inner=1, r_outer=2, lambda=5)
 
   ### Symbolic Parameters
   __params = Any[]
   append!(__params, @parameters (eps_::Float64 = 1e-15), [description = "should be a machine-based constant instead e.g., eps_()"])
-  append!(__params, @parameters (surfaceArea::Float64 = surfaceArea), [description = "Heat transfer surface area"])
-  append!(__params, @parameters (alpha::Float64 = alpha), [description = "Convection heat transfer coefficient"])
+  append!(__params, @parameters (length::Float64 = length), [description = "Cylinder length"])
+  append!(__params, @parameters (r_inner::Float64 = r_inner), [description = "Inner radius"])
+  append!(__params, @parameters (r_outer::Float64 = r_outer), [description = "Outer radius"])
+  append!(__params, @parameters (lambda::Float64 = lambda), [description = "Thermal conductivity"])
+  append!(__params, @parameters (pi::Float64 = 3.14159), [description = "pi - should be moved elsewhere"])
 
   ### Variables
   __vars = Any[]
@@ -57,14 +62,14 @@ Convection
   __eqs = Equation[]
   push!(__eqs, 0 ~ port_a.Q_flow + port_b.Q_flow)
   push!(__eqs, port_a.Q_flow ~ (port_a.T - port_b.T) / max(eps_, R))
-  push!(__eqs, R ~ 1 / max(eps_, alpha * surfaceArea))
+  push!(__eqs, R ~ ifelse(r_inner > 0, log(r_outer / r_inner) / (2 * pi * L * lambda), 1 / (4 * pi * length * lambda)))
 
   # Return completely constructed ODESystem
   return ODESystem(__eqs, t, __vars, __params; systems=__systems, defaults=__defaults, name, initialization_eqs=__initialization_eqs)
 end
-export Convection
+export Cylinder
 
-Base.show(io::IO, a::MIME"image/svg+xml", t::typeof(Convection)) = print(io,
+Base.show(io::IO, a::MIME"image/svg+xml", t::typeof(Cylinder)) = print(io,
   """<div style="height: 100%; width: 100%; background-color: white"><div style="margin: auto; height: 500px; width: 500px; padding: 200px"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 1000"
     overflow="visible" shape-rendering="geometricPrecision" text-rendering="geometricPrecision">
       <defs>

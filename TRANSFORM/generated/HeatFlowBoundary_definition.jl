@@ -7,6 +7,8 @@
 @doc Markdown.doc"""
    HeatFlowBoundary(; name, Q_flow)
 
+Heat flow boundary condition
+
 ## Parameters: 
 
 | Name         | Description                         | Units  |   Default value |

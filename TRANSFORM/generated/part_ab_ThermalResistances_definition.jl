@@ -5,14 +5,16 @@
 
 
 @doc Markdown.doc"""
-   Part_ab_ThermalResistances(; name, T_a, T_b, r_inner, th_1, th_ins, th_2)
+   Part_ab_ThermalResistances(; name, T_LiquidOxygen, T_Ambient, r_inner, th_1, th_ins, th_2)
+
+Example 1.2-1 from Heat Transfer by Greg Nellis and Sandy Klein# Liquid Oxygen Dewar heat transfer network# Part a & b) Use thermal resistances network to investigate steady state rate of heat transfer to the liquid oxygen
 
 ## Parameters: 
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `T_a`         |                          | K  |   95.6 |
-| `T_b`         |                          | K  |   293.15 |
+| `T_LiquidOxygen`         |                          | K  |   95.6 |
+| `T_Ambient`         |                          | K  |   293.15 |
 | `r_inner`         |                          | m  |   0.1 |
 | `th_1`         |                          | m  |   0.0025 |
 | `th_ins`         |                          | m  |   0.01 |
@@ -24,12 +26,12 @@
 | ------------ | ----------------------------------- | ------ | 
 | `Q_total`         |                          | W  | 
 """
-@component function Part_ab_ThermalResistances(; name, T_a=95.6, T_b=293.15, r_inner=0.1, th_1=0.0025, th_ins=0.01, th_2=0.0025)
+@component function Part_ab_ThermalResistances(; name, T_LiquidOxygen=95.6, T_Ambient=293.15, r_inner=0.1, th_1=0.0025, th_ins=0.01, th_2=0.0025)
 
   ### Symbolic Parameters
   __params = Any[]
-  append!(__params, @parameters (T_a::Float64 = T_a))
-  append!(__params, @parameters (T_b::Float64 = T_b))
+  append!(__params, @parameters (T_LiquidOxygen::Float64 = T_LiquidOxygen))
+  append!(__params, @parameters (T_Ambient::Float64 = T_Ambient))
   append!(__params, @parameters (r_inner::Float64 = r_inner))
   append!(__params, @parameters (th_1::Float64 = th_1))
   append!(__params, @parameters (th_ins::Float64 = th_ins))
@@ -48,8 +50,8 @@
 
   ### Components
   __systems = ODESystem[]
-  push!(__systems, @named boundary_LiquidOxygen = TRANSFORM.TemperatureBoundary(T=T_a))
-  push!(__systems, @named boundary_Ambient = TRANSFORM.TemperatureBoundary(T=T_b))
+  push!(__systems, @named boundary_LiquidOxygen = TRANSFORM.TemperatureBoundary(T=T_LiquidOxygen))
+  push!(__systems, @named boundary_Ambient = TRANSFORM.TemperatureBoundary(T=T_Ambient))
   push!(__systems, @named convectionInner = TRANSFORM.Convection(surfaceArea=4 * pi * r_inner ^ 2, alpha=150))
   push!(__systems, @named linerInner = TRANSFORM.Sphere(r_inner=r_inner, r_outer=r_ins_inner, lambda=15))
   push!(__systems, @named contact_1 = TRANSFORM.Contact(surfaceArea=4 * pi * r_ins_inner ^ 2, Rc_pp=0.003))

@@ -16,6 +16,7 @@ using DyadInterface
   var"saveat"::Float64 = 0
   var"dtmax"::Float64 = 0
   var"IfLifting"::Bool = false
+  # Example 1.2-1 from Heat Transfer by Greg Nellis and Sandy Klein# Liquid Oxygen Dewar heat transfer network# Part a & b) Use thermal resistances network to investigate steady state rate of heat transfer to the liquid oxygen
   var"model"::Union{Nothing, ODESystem} = TRANSFORM.Part_ab_ThermalResistances(; name=:Part_ab_ThermalResistances)
 end
 

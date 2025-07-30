@@ -7,13 +7,15 @@
 @doc Markdown.doc"""
    Plane(; name, th, crossArea, lambda)
 
+Plane
+
 ## Parameters: 
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `th`         |                          | m  |   0.01 |
-| `crossArea`         |                          | m2  |   1 |
-| `lambda`         |                          | W/(m.K)  |   5 |
+| `th`         | Wall thickness parallel to heat flow                         | m  |   0.01 |
+| `crossArea`         | Cross-sectional area perpindicular to heat flow                         | m2  |   1 |
+| `lambda`         | Thermal conductivity                         | W/(m.K)  |   5 |
 
 ## Connectors
 
@@ -30,10 +32,10 @@
 
   ### Symbolic Parameters
   __params = Any[]
-  append!(__params, @parameters (eps_::Float64 = 1e-15), [description = "should be a constant instead e.g., eps_()"])
-  append!(__params, @parameters (th::Float64 = th))
-  append!(__params, @parameters (crossArea::Float64 = crossArea))
-  append!(__params, @parameters (lambda::Float64 = lambda))
+  append!(__params, @parameters (eps_::Float64 = 1e-15), [description = "should be a machine-based constant instead e.g., eps_()"])
+  append!(__params, @parameters (th::Float64 = th), [description = "Wall thickness parallel to heat flow"])
+  append!(__params, @parameters (crossArea::Float64 = crossArea), [description = "Cross-sectional area perpindicular to heat flow"])
+  append!(__params, @parameters (lambda::Float64 = lambda), [description = "Thermal conductivity"])
 
   ### Variables
   __vars = Any[]

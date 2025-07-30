@@ -1,6 +1,9 @@
+# Example 1.2-1 from Heat Transfer by Greg Nellis and Sandy Klein
+# Liquid Oxygen Dewar heat transfer network
+# Part a & b) Use thermal resistances network to investigate steady state rate of heat transfer to the liquid oxygen
 component Part_ab_ThermalResistances
-    parameter T_a::Temperature = 95.6
-    parameter T_b::Temperature = 293.15
+    parameter T_LiquidOxygen::Temperature = 95.6
+    parameter T_Ambient::Temperature = 293.15
 
     parameter r_inner::Length = 0.1
     parameter th_1::Length = 0.0025
@@ -15,8 +18,8 @@ component Part_ab_ThermalResistances
 
     final constant pi::Real = 3.14159 
 
-    boundary_LiquidOxygen = TemperatureBoundary(T=T_a)
-    boundary_Ambient = TemperatureBoundary(T=T_b)
+    boundary_LiquidOxygen = TemperatureBoundary(T=T_LiquidOxygen)
+    boundary_Ambient = TemperatureBoundary(T=T_Ambient)
     convectionInner = Convection(surfaceArea=4*pi*r_inner^2,alpha=150)
     linerInner = Sphere(r_inner=r_inner,r_outer=r_ins_inner,lambda=15)
     contact_1 = Contact(surfaceArea=4*pi*r_ins_inner^2,Rc_pp=0.003)
@@ -44,7 +47,7 @@ relations
     #connect(linerOuter.port_b,convectionOuter.port_a)
     #connect(radiationOuter.port_b,boundary_Ambient.port)
     #connect(convectionOuter.port_b,boundary_Ambient.port)
-    
+
     der(Q_total) = convectionInner.port_a.Q_flow
 end
 

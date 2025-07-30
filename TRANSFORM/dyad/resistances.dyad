@@ -1,3 +1,4 @@
+# Temperature boundary condition
 component TemperatureBoundary
     port = HeatPort()
     parameter T::Temperature = 293.15
@@ -5,6 +6,7 @@ relations
     port.T = T
 end
 
+# Heat flow boundary condition
 component HeatFlowBoundary
     port = HeatPort()
     parameter Q_flow::HeatFlowRate = 0
@@ -16,34 +18,51 @@ partial component PartialResistance
     port_a = HeatPort()
     port_b = HeatPort()
     variable R::Real(units = "K/W")
-    # should be a constant instead e.g., eps_()
+    # should be a machine-based constant instead e.g., eps_()
     final parameter eps_::Real(units="m^2") = 1e-15
 relations
     0 = port_a.Q_flow + port_b.Q_flow
     port_a.Q_flow = (port_a.T - port_b.T)/max(eps_,R)
 end
 
+# Plane
 component Plane
     extends PartialResistance()
+    # Wall thickness parallel to heat flow
     parameter th::Length = 0.01
+    # Cross-sectional area perpindicular to heat flow
     parameter crossArea::Area = 1.0
+    # Thermal conductivity
     parameter lambda::ThermalConductivity = 5.0
 relations
     R = th/max(eps_, lambda*crossArea)
 end
 
-component Convection
+# Cylinder | Radial
+component Cylinder
     extends PartialResistance()
-    parameter surfaceArea::Area = 0.01
-    parameter alpha::CoefficientOfHeatTransfer = 1000
+    # Cylinder length
+    parameter length::Length = 1.0
+    # Inner radius
+    parameter r_inner::Area = 1.0
+    # Outer radius
+    parameter r_outer::Area = 2.0
+    # Thermal conductivity
+    parameter lambda::ThermalConductivity = 5.0
+    # pi - should be moved elsewhere
+    final parameter pi::Real = 3.14159 
 relations
-    R = 1/max(eps_,alpha*surfaceArea)
+    R = ifelse(r_inner>0, log(r_outer/r_inner)/(2*pi*L*lambda), 1/(4*pi*length*lambda))
 end
 
+# Sphere | Radial
 component Sphere
     extends PartialResistance()
+    # Inner radius
     parameter r_inner::Length = 0.01
+    # Outerius
     parameter r_outer::Length = 1.0
+    # Thermal conductivity
     parameter lambda::ThermalConductivity = 5.0
     # pi - should be moved elsewhere
     final parameter pi::Real = 3.14159    
@@ -51,28 +70,40 @@ relations
     R = 1/(4*pi*lambda)*(1/r_inner - 1/r_outer)
 end
 
+# Convection
+component Convection
+    extends PartialResistance()
+    # Heat transfer surface area
+    parameter surfaceArea::Area = 0.01
+     # Convection heat transfer coefficient
+    parameter alpha::CoefficientOfHeatTransfer = 1000
+relations
+    R = 1/max(eps_,alpha*surfaceArea)
+end
+
+# Contact
 component Contact
     extends PartialResistance()
-       
+    # Heat transfer surface area
     parameter surfaceArea::Area = 0.01
+    # Area specific contact resistance
     parameter Rc_pp::Real(units="m^2*K/W") = 1.0
 relations
         R = Rc_pp/max(eps_,surfaceArea)
 end
 
+# Radiation
 component Radiation
     extends PartialResistance() 
+    # Heat transfer surface area
     parameter surfaceArea::Area = 0.01
+    # Emissivity
     parameter epsilon::Real(units="m/m") = 1.0
+    # =false to use average temperature approximation Tbar^3
     parameter useExact::Boolean=true
     # should be a constant but causes an error
     final parameter sigma::Real(units="W/(m^2*K^4)") = 5.670374419 * 10^(-8)
 relations
-    #R ~ IfElse.ifelse(useExact,
-    #            1/(surfaceArea*sigma*epsilon*(port_a.T^2+port_b.T^2)*(port_a.T + port_b.T)),
-    #            1/(4*surfaceArea*sigma*epsilon*(0.5*(port_a.T + port_b.T))^3))
-
-    #R = 1/(surfaceArea*sigma*epsilon*(port_a.T^2+port_b.T^2)*(port_a.T + port_b.T))
     R = ifelse(useExact,
         1/(surfaceArea*sigma*epsilon*(port_a.T^2+port_b.T^2)*(port_a.T + port_b.T)),
         1/(4*surfaceArea*sigma*epsilon*(0.5*(port_a.T + port_b.T))^3))
